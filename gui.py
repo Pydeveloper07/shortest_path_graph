@@ -16,8 +16,12 @@ class Window(QWidget):
         self.graph = None
         self.src_input = QLineEdit()
         self.dest_input = QLineEdit()
+        self.result_label = QLabel()
         self.canvas_label = QLabel()
+        self.canvas_label.setMinimumSize(978, 739)
+        self.canvas_label.setMaximumSize(978, 739)
         self.vbox = QVBoxLayout()
+        self.setStyleSheet("background: white")
         self.init_graph()
         self.init_ui()
         self.init_topbar()
@@ -39,7 +43,7 @@ class Window(QWidget):
         screen_rect = desktop.screenGeometry()
         window_h = screen_rect.height()
         window_w = screen_rect.width()
-        self.setMaximumSize(self.width, self.height)
+        # self.setMaximumSize(self.width, self.height)
         self.setMinimumSize(self.width, self.height)
         self.setGeometry(int((window_w-self.width)/2), int((window_h-self.height)/2), self.width, self.height)
         self.setWindowTitle("Graph Window")
@@ -59,6 +63,8 @@ class Window(QWidget):
         submit_btn.clicked.connect(self.find_shortest_path)
         left_spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         right_spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        tw_label = QLabel("Total weight: ")
+        self.result_label.setMinimumWidth(30)
 
         hbox.addSpacerItem(left_spacer)
         hbox.addWidget(src_label)
@@ -67,23 +73,42 @@ class Window(QWidget):
         hbox.addWidget(self.dest_input)
         hbox.addWidget(submit_btn)
         hbox.addSpacerItem(right_spacer)
+        hbox.addWidget(tw_label)
+        hbox.addWidget(self.result_label)
         self.vbox.addLayout(hbox)
 
     def init_canvas(self):
         self.canvas_label.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        canvas = QtGui.QPixmap("map.jpg")
+        canvas = QtGui.QPixmap("graph.png")
         self.canvas_label.setPixmap(canvas)
-        self.vbox.addWidget(self.canvas_label)
+        vspacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        self.vbox.addSpacerItem(vspacer)
+        self.vbox.addWidget(self.canvas_label, alignment=QtCore.Qt.AlignCenter)
+        vspacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        self.vbox.addSpacerItem(vspacer)
 
     def find_shortest_path(self):
-        source = self.src_input.text()
-        destination = self.dest_input.text()
+        source = self.src_input.text().upper().strip()
+        destination = self.dest_input.text().upper().strip()
+        if not source or not destination:
+            if not source and not destination:
+                self.show_error_msg("Please specify the SOURCE and DESTINATION!")
+                return
+            elif not source:
+                self.show_error_msg("Please specify the SOURCE!")
+                return
+            else:
+                self.show_error_msg("Please specify the DESTINATION!")
+                return
         flag, result = self.graph.shortest_path(source, destination)
         if not flag:
+            self.canvas_label.setPixmap(QtGui.QPixmap("graph.png"))
             self.show_error_msg(result)
         else:
-            shortest_path = result
-            self.draw_shortest_path(shortest_path)
+            self.result_label.setText(str(result[-1]))
+            self.canvas_label.setPixmap(QtGui.QPixmap("graph.png"))
+            self.draw_shortest_path(result)
+
 
     def show_error_msg(self, msg):
         msgbox = QMessageBox(self)
@@ -95,11 +120,10 @@ class Window(QWidget):
     def draw_shortest_path(self, path):
         total_weight = path[-1]
         path = path[:-1]
-        self.canvas_label.setPixmap(QtGui.QPixmap("map.jpg"))
         painter = QtGui.QPainter(self.canvas_label.pixmap())
         pen = QtGui.QPen()
-        pen.setWidth(5)
-        pen.setColor(QtGui.QColor("red"))
+        pen.setWidth(4)
+        pen.setColor(QtGui.QColor("#249c00"))
         painter.setPen(pen)
         point_list = []
         for x in path:
@@ -109,18 +133,6 @@ class Window(QWidget):
             ))
         polygon = QtGui.QPolygonF(point_list)
         painter.drawPolyline(polygon)
-
-        # for i in range(len(path)-1):
-        #     point_list.append([
-        #         self.graph.coordinate_of_vertices[path[i]][0],
-        #         self.graph.coordinate_of_vertices[path[i]][1],
-        #         self.graph.coordinate_of_vertices[path[i+1]][0],
-        #         self.graph.coordinate_of_vertices[path[i+1]][1]
-        #     ])
-        # for line in point_list:
-        #     painter.drawLine(line[0], line[1], line[2], line[3])
-        #     self.update()
-        #     time.sleep(1)
         time.sleep(0.5)
         self.update()
         painter.end()

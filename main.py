@@ -50,10 +50,6 @@ class Graph:
                     # Condition to check if the neighbour node is the destination
                     if neighbour[0] == d:
                         connection_exist = True
-                        # shortest_path = []
-                        # for i in range(len(new_path)-1):
-                        #     shortest_path.append([new_path[i], new_path[i+1]])
-                        # print("Shortest path = ", new_path)
                         all_paths.append(new_path)
                     explored.append(node)
         # Condition when the nodes are not connected
