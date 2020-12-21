@@ -60,6 +60,8 @@ class Window(QWidget):
         dest_label.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
         self.dest_input.setMaximumWidth(50)
         submit_btn = QPushButton("FIND PATH")
+        submit_btn.setStyleSheet("background: green; color:white; padding: 5px 10px;")
+        submit_btn.setIcon(QtGui.QIcon("search.png"))
         submit_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
         submit_btn.clicked.connect(self.find_shortest_path)
         left_spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
