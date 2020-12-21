@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from main import Graph
-from Models import edges, vertex_list
+from graph_complex import edges, vertex_list
 import sys
 import time
 
@@ -14,6 +14,7 @@ class Window(QWidget):
         self.width = 1000
         self.height = 800
         self.graph = None
+        self.file = "graph-complex.png"
         self.src_input = QLineEdit()
         self.dest_input = QLineEdit()
         self.result_label = QLabel()
@@ -79,7 +80,7 @@ class Window(QWidget):
 
     def init_canvas(self):
         self.canvas_label.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        canvas = QtGui.QPixmap("graph.png")
+        canvas = QtGui.QPixmap(self.file)
         self.canvas_label.setPixmap(canvas)
         vspacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         self.vbox.addSpacerItem(vspacer)
@@ -102,11 +103,11 @@ class Window(QWidget):
                 return
         flag, result = self.graph.shortest_path(source, destination)
         if not flag:
-            self.canvas_label.setPixmap(QtGui.QPixmap("graph.png"))
+            self.canvas_label.setPixmap(QtGui.QPixmap(self.file))
             self.show_error_msg(result)
         else:
             self.result_label.setText(str(result[-1]))
-            self.canvas_label.setPixmap(QtGui.QPixmap("graph.png"))
+            self.canvas_label.setPixmap(QtGui.QPixmap(self.file))
             self.draw_shortest_path(result)
 
 
@@ -122,7 +123,7 @@ class Window(QWidget):
         path = path[:-1]
         painter = QtGui.QPainter(self.canvas_label.pixmap())
         pen = QtGui.QPen()
-        pen.setWidth(4)
+        pen.setWidth(3)
         pen.setColor(QtGui.QColor("#249c00"))
         painter.setPen(pen)
         point_list = []
