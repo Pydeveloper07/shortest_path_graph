@@ -134,6 +134,12 @@ class Window(QWidget):
         result = self.__find_path(source, destination)
         if isinstance(result, list):
             self.shortest_path = result
+        else:
+            self.show_error_msg(result)
+        try:
+            self.__prepare_voice_response()
+        except Exception:
+            self.show_error_msg("Something went wrong during processing voice.")
 
     def __find_path(self, source, destination):
         if not source or not destination:
