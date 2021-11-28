@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "smart-guide-project-333216",
+  "private_key_id": "f38d9df74b88f906890dcece0c72eb42a12b4686",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDWCL/ylSLkFMF1\nl48DZg2/vOKnajB6USUcOyioCwgBy3TvEQAwlopwuYwgt81SfdC/Aq35k8Qd5GQk\nzekpKdJ9yY6aEcwZmUFJQAKlN85zhQpLv+iJwb+yeycQvTPyJMw6KfrM9mhYiWR4\nT1/XEeD0+l6IiC4pwr0UyVyDDMTe/dMPRVXisTW8BFwVRWJHUbcqMh/wtgwSjYXh\n8Yc7XHEs3DGkaCjDqeoemflxL9amFZ9FibYFgMAay2ThbIqBIot+ZfUcCuJMM/A+\nl99QejGVyIjy+ywqHQLZXG4Bsnwj2XsI31RDINMWDD9ci7RSTiaL6QG0otpBNPcV\ncVvusdQdAgMBAAECggEAB5aU05FlBMgVmckvSVQPbbpRINVbdaK12ZvhU5/cf0/K\nzAUCyDY2H0v8w1Yw4dlTEsqSB3StMdAcms9wEkUI0OvZ8e1qmoe78FBkJ55kY+UW\nGdxqbqPfW4ERP/8tPcr/MJq3aRfdWDI6zScnQzU/j//mZRnK5TEhygBflsfXnP47\nGeCk9OZnBsyEHOBvGEyQWDl67jv1RA2vBkJaQyZtgRUEUjspo3bqBN92ZrVex7fy\nX6p4kBeygWJBmJIpqDHInv7bD2UlBdpGEpkwCn1xh29nTw7svKJt02HcO1oMzrAh\njqF5Th4gNQQq18vwEEmAWsq6cCy0xNM3i913sf+eMQKBgQD/PtcdDazeJw2wG11W\nA/EZ3Y7yk4VkoVFWPNIqOMXMKnGasDho1VCMFqlhBNOXb5hUogBFZv1i0pHmVxjZ\nwFxZnvCoBCtb3PHwRG+RbEURx5DQtNv0cYPw4j1ZmN/3JUuNWqZC8gv8zvAMj5NV\n9oNE58V8B28yNyqcEvE+3XBQyQKBgQDWqrjw/aIgQALbMxV/7NCKQwQeBov9/IGl\nKCNwA//1VByJ7OqghCGQS8G9Qlo1uksKOhzxoZ/jzSBSGjERudboPijGpdDTSNPw\nkPaZLc78j88UBpDxzmUgFsb6tuhtcesOtI4FvOYV4+h8Lv+LrBsFToVV3qf0xnKL\nJhYrj0QGtQKBgFLm8Ctpk6ob+SAn4yra4OZLxfAX5g2HL8nYu1InWmczqe5aKhgy\noJS/j4gJb0gSYOGsNHZWOxpr1iOASnv/NH+PVg7cO9D8dEBbmfkbt1tM/EYtV/uP\nGxGUCeUd+DBnlqB0vuejgi08cU9DGtGi3YP123irWXxv2pESvfRzK9WxAoGBAMyE\nHmrK2flrwszfoG4eSphPPM72Yc17EnEtCoYf6W3r0ry9ENQYznlRE6WiX5usfu2h\nbA3xdAluVoqiFXnT2iGtht+q/octbW5WTfqmH/uTbzCfCNy3TLUDvlMCi/IphE6g\nSmbBD1xvpAEcLa7+K0glBPdIiC+2GU7k3F5nweG5AoGARY/gqGIJvxGsZN/SJcV3\nF/BttXnbd5XfPYoST4ovCJToCeSr5NcKfY5zHioZU/cCCs0l+0z84vsWrkLpp4E0\nvpxDavVUNAbQxM38Wgg5u/RJCg1O5FYheYbK9ZP1ChZZLQWtxfqPkWezGlm8Zw5z\nm98feguaWYifLs392b/86Ao=\n-----END PRIVATE KEY-----\n",
+  "client_email": "service-smart-guide@smart-guide-project-333216.iam.gserviceaccount.com",
+  "client_id": "113720619101039146398",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-smart-guide%40smart-guide-project-333216.iam.gserviceaccount.com"
+}

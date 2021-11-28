@@ -3,10 +3,14 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, \
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import QtCore
-from main import Graph
+from graph import Graph
 from graph_complex import edges, vertex_list
-import sys
+from sound_recorder import record
+from speech_to_text_converter import convert_speech_to_text
+from text_to_speech_converter import convert_text_to_speech
+from voice_player import play_audio_file
 import time
+
 
 class Window(QWidget):
     def __init__(self):
@@ -14,7 +18,10 @@ class Window(QWidget):
         self.width = 1000
         self.height = 800
         self.graph = None
+        self.vertex_identifiers = [vertex[0] for vertex in vertex_list.values()]
         self.file = "graph-complex.png"
+        self.shortest_path = None
+        self.response_voice_path = None
         self.src_input = QLineEdit()
         self.dest_input = QLineEdit()
         self.result_label = QLabel()
@@ -26,6 +33,7 @@ class Window(QWidget):
         self.init_graph()
         self.init_ui()
         self.init_topbar()
+        self.init_sub_bar()
         self.init_canvas()
 
     def init_graph(self):
@@ -46,13 +54,13 @@ class Window(QWidget):
         window_w = screen_rect.width()
         # self.setMaximumSize(self.width, self.height)
         self.setMinimumSize(self.width, self.height)
-        self.setGeometry(int((window_w-self.width)/2), int((window_h-self.height)/2), self.width, self.height)
+        self.setGeometry(int((window_w - self.width) / 2), int((window_h - self.height) / 2), self.width, self.height)
         self.setWindowTitle("Graph Window")
         self.setLayout(self.vbox)
         self.show()
 
     def init_topbar(self):
-        hbox = QHBoxLayout()
+        self.hbox = QHBoxLayout()
         src_label = QLabel("Source:")
         src_label.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
         self.src_input.setMaximumWidth(50)
@@ -64,20 +72,50 @@ class Window(QWidget):
         submit_btn.setIcon(QtGui.QIcon("search.png"))
         submit_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
         submit_btn.clicked.connect(self.find_shortest_path)
+        record_btn = QPushButton("Record")
+        record_btn.setStyleSheet(
+            "background: #46eaf2; color:#000ead; padding: 5px 10px; margin-left:5px; margin-right: 5px;"
+        )
+        record_btn.setIcon(QtGui.QIcon("microphone.png"))
+        record_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
+        record_btn.clicked.connect(self.record)
+        play_button = QPushButton("Play")
+        play_button.setStyleSheet(
+            "background: #46eaf2; color:#000ead; padding: 5px 10px; margin-left:5px; margin-right: 5px;"
+        )
+        # play_button.setIcon(QtGui.QIcon("microphone.png"))
+        play_button.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
+        play_button.clicked.connect(self.play)
         left_spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         right_spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         tw_label = QLabel("Total weight: ")
         self.result_label.setMinimumWidth(30)
 
+        self.hbox.addSpacerItem(left_spacer)
+        self.hbox.addWidget(src_label)
+        self.hbox.addWidget(self.src_input)
+        self.hbox.addWidget(dest_label)
+        self.hbox.addWidget(self.dest_input)
+        self.hbox.addWidget(submit_btn)
+        self.hbox.addWidget(record_btn)
+        self.hbox.addWidget(play_button)
+        self.hbox.addSpacerItem(right_spacer)
+        self.hbox.addWidget(tw_label)
+        self.hbox.addWidget(self.result_label)
+        self.vbox.addLayout(self.hbox)
+
+    def init_sub_bar(self):
+        hbox = QHBoxLayout()
+
+        rec_label = QLabel()
+        rec_label.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        rec_label.setObjectName("recordIndicator")
+        left_spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        right_spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+
         hbox.addSpacerItem(left_spacer)
-        hbox.addWidget(src_label)
-        hbox.addWidget(self.src_input)
-        hbox.addWidget(dest_label)
-        hbox.addWidget(self.dest_input)
-        hbox.addWidget(submit_btn)
+        hbox.addWidget(rec_label)
         hbox.addSpacerItem(right_spacer)
-        hbox.addWidget(tw_label)
-        hbox.addWidget(self.result_label)
         self.vbox.addLayout(hbox)
 
     def init_canvas(self):
@@ -93,6 +131,11 @@ class Window(QWidget):
     def find_shortest_path(self):
         source = self.src_input.text().upper().strip()
         destination = self.dest_input.text().upper().strip()
+        result = self.__find_path(source, destination)
+        if isinstance(result, list):
+            self.shortest_path = result
+
+    def __find_path(self, source, destination):
         if not source or not destination:
             if not source and not destination:
                 self.show_error_msg("Please specify the SOURCE and DESTINATION!")
@@ -112,6 +155,7 @@ class Window(QWidget):
             self.canvas_label.setPixmap(QtGui.QPixmap(self.file))
             self.draw_shortest_path(result)
 
+        return result
 
     def show_error_msg(self, msg):
         msgbox = QMessageBox(self)
@@ -140,7 +184,56 @@ class Window(QWidget):
         self.update()
         painter.end()
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Window()
-    sys.exit(app.exec_())
+    def set_recording_indicator_status(self, status_text):
+        rec_indicator = self.findChild(QLabel, "recordIndicator")
+        rec_indicator.setText(status_text)
+
+    def record(self):
+        try:
+            self.set_recording_indicator_status("Processing your voice...")
+            audio_path = record()
+            result = convert_speech_to_text(audio_path)
+            self.__process_result(result)
+            self.set_recording_indicator_status("")
+        except Exception:
+            self.show_error_msg("Something went wrong.")
+
+    def __process_result(self, result):
+        try:
+            result = [ch.upper() for ch in result.split()]
+            inters = tuple(set(self.vertex_identifiers).intersection(set(result)))
+            source, destination = tuple(sorted(inters, key=lambda x: result.index(x)))
+            self.src_input.setText(source)
+            self.dest_input.setText(destination)
+            result = self.__find_path(source, destination)
+            if isinstance(result, list):
+                self.shortest_path = result
+            else:
+                self.show_error_msg(result)
+            self.__prepare_voice_response()
+        except Exception:
+            self.show_error_msg("Something went wrong during processing voice.")
+
+    def __prepare_voice_response(self):
+        if self.shortest_path:
+            text = self.__convert_path_to_speech_text()
+        else:
+            self.show_error_msg("Path not found.")
+            return
+        self.response_voice_path = convert_text_to_speech(text)
+
+    def play(self):
+        if self.response_voice_path:
+            play_audio_file(self.response_voice_path)
+        else:
+            self.show_error_msg("No response found to play.")
+
+    def __convert_path_to_speech_text(self):
+        text = "Take the route: "
+        path = self.shortest_path[:-1]
+        path_to_text = ', '.join(path)
+        text += path_to_text
+        text += f" The cost is {self.shortest_path[-1]}"
+
+        return text
+
